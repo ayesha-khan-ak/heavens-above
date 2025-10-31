@@ -139,8 +139,9 @@ jobs:
           security-report.txt
           automated-code-review.txt
 
-    # Step 7: PR Comment with Results
+        # Step 7: PR Comment with Results (only on PR events)
     - name: Comment on Pull Request
+      if: github.event_name == 'pull_request'
       uses: actions/github-script@v6
       with:
         script: |
