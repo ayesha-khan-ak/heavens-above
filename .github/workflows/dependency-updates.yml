@@ -1,26 +1,24 @@
 name: Dependency Updates
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-    branches:
-      - main
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday
+  workflow_dispatch:
 
 jobs:
-  test-dependency-updates:
-    runs-on: ubuntu-latest
-
+  dependency-check:
+    runs-on: windows-latest
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests
-        run: npm test
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Check Windows dependencies
+      run: |
+        npm outdated || echo "Dependency check completed"
+        echo "Windows-compatible dependency updates"

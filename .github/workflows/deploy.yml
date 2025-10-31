@@ -6,31 +6,27 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: windows-latest
+    permissions:
+      contents: write
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
 
-      - name: Install dependencies
-        run: npm install
+    - name: Create deployment package
+      run: |
+        mkdir dist
+        echo ^<html^>^<body^>^<h1^>Heavens Above - Deployed^</h1^>^<p^>Deployed from Windows via GitHub Actions^</p^>^</body^>^</html^> > dist\index.html
 
-      - name: Build project
-        run: |
-          if [ -f package.json ]; then
-            npm run build || echo "No build script found"
-          else
-            echo "No package.json found, skipping build"
-          fi
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist

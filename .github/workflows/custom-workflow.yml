@@ -2,28 +2,24 @@ name: Generate Release Notes
 
 on:
   release:
-    types: [published]  # Trigger when a new release is published
-  workflow_dispatch:    # Allow manual runs
+    types: [published]
+  workflow_dispatch:
 
 jobs:
   generate-notes:
-    runs-on: ubuntu-latest
-
+    runs-on: windows-latest
+    
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # Step 2: Generate release notes using GitHub CLI
-      - name: Generate Release Notes
-        run: |
-          echo "Generating release notes..."
-          gh release view ${{ github.event.release.tag_name }} --json name,body > release_notes.json
-          cat release_notes.json
-
-      # Step 3: Upload release notes as an artifact for reference
-      - name: Upload release notes artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-notes
-          path: release_notes.json
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Generate Windows release notes
+      run: |
+        echo "Generating release notes on Windows..."
+        echo { "release": "${{ github.event.release.tag_name }}", "platform": "windows", "date": "$(Get-Date -Format o)" } > release_notes.json
+        
+    - name: Upload release notes
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-release-notes
+        path: release_notes.json
