@@ -13,13 +13,26 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Generate Windows release notes
+    - name: Generate release notes
       run: |
-        echo "Generating release notes on Windows..."
-        echo { "release": "${{ github.event.release.tag_name }}", "platform": "windows", "date": "$(Get-Date -Format o)" } > release_notes.json
+        echo "📝 Generating release notes on Windows..."
+        # Simple JSON creation that works on Windows
+        echo '{' > release_notes.json
+        echo '  "release": "${{ github.event.release.tag_name }}",' >> release_notes.json
+        echo '  "platform": "windows",' >> release_notes.json
+        echo '  "date": "'$(Get-Date -Format "yyyy-MM-ddTHH:mm:ss")'",' >> release_notes.json
+        echo '  "workflow": "${{ github.workflow }}",' >> release_notes.json
+        echo '  "status": "success"' >> release_notes.json
+        echo '}' >> release_notes.json
+        
+        echo "✅ Release notes generated successfully!"
+        type release_notes.json
         
     - name: Upload release notes
       uses: actions/upload-artifact@v4
       with:
         name: windows-release-notes
         path: release_notes.json
+        
+    - name: Success message
+      run: echo "🎉 Custom workflow completed successfully! Release notes generated."
